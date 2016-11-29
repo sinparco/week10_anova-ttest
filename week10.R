@@ -25,3 +25,24 @@ library(MBESS)
 smd(Group.1=exp.group.rows$Arousal, Group.2=control.group.rows$Arousal) #calculates d values (difference between means in sd terms, ie., standardized mean differences)
 smd(Mean.1=3.2, s.1=.8, Mean.2=2.45, s.2=2.91, n.1=10, n.2=10)
 ci.smd(smd=0875, n.1=10, n.2=10)
+
+#### ONE WAY ANOVA ####
+mdata <- read_csv("Viagra.csv")
+mdata$dose <- as.factor(mdata$dose)
+levels(mdata$dose) <- list ("Placebo" =1, "Low Dose" = 2, "High Dose" = 3)
+
+car::leveneTest(mdata$libido, group=mdata$dose, center="median")
+
+options(contrasts = c("contr.sum", "contr.poly"))
+
+oneway.results <- lm(libido~dose, data=mdata)
+car::Anova(oneway.results,type=3)
+
+#Alernatively....with CI so it's kinda perfeect.
+library(apaTables)
+apa.aov.table(oneway.results)
+
+apa.1way.table(iv=dose, dv=libido, data=mdata)
+apa.d.table(iv=dose, dv=libido, data=mdata)
+
+
